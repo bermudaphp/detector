@@ -1,0 +1,13 @@
+{
+    "name": "bermudaphp/detector",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Bermuda\\Detector\\": "src/"
+        },
+        "files": ["src\\functions.php"]
+    },
+    "require": {
+        "php": "^8.0.0"
+    }
+}
