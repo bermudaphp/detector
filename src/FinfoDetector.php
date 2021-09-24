@@ -9,45 +9,92 @@ final class FinfoDetector implements ContentDetector
 {
     /**
      * @param string $filename
-     * @return string
+     * @return string|null
+     * @throws \RuntimeException if read file is failed
      */
-    public function detectFileMimeType(string $filename): string
+    public function detectFileMimeType(string $filename):? string
     {
-        return $this->detectMimeType(file_get_contents($filename));
+        return $this->detectMimeType($this->readFile($filename));
     }
 
     /**
      * @param string $content
-     * @return string
+     * @return string|null
      */
-    public function detectMimeType(string $content): string
+    public function detectMimeType(string $content):? string
     {
-        return $this->finfoBuffer(FILEINFO_MIME_TYPE, $content);
+        $mimeType = $this->finfoBuffer(FILEINFO_MIME_TYPE, $content);
+        return $mimeType === '???' ? null : $mimeType;
     }
-    
+
     /**
      * @param string $filename
-     * @return string
+     * @return string|null
+     * @throws \RuntimeException if read file is failed
      */
-    public function detectFileExtension(string $filename): string
+    public function detectFileExtension(string $filename):? string
     {
-        return $this->detectExtension(file_get_contents($filename));
+        $content = $this->readFile($filename);
+
+        $ext = $this->finfoBuffer(FILEINFO_EXTENSION, $content);
+
+        if ($ext === '???') {
+
+            $result = $this->getExtensions($content);
+            
+            if ($result === []) {
+                return null;
+            }
+            
+            $result = array_map('strtolower', $result);
+            $ext = pathinfo($filename, PATHINFO_EXTENSION);
+
+            if (in_array(strtolower($ext), $result)) {
+                return $ext;
+            }
+            
+            return array_shift($result);
+        }
+        
+        return $ext;
     }
 
     /**
      * @param string $content
-     * @return string
+     * @return string|null
      */
-    public function detectExtension(string $content): string
+    public function detectExtension(string $content):? string
     {
         $ext = $this->finfoBuffer(FILEINFO_EXTENSION, $content);
 
         if ($ext === '???') {
-            $mimeType = $this->detectMimeType($content);
-            return (new MimeTypes)->getExtensions($mimeType);
+            $result = $this->getExtensions($content);
+            return $result !== [] ? array_shift($result) : null ;
         }
 
         return $ext;
+    }
+
+    /**
+     * @param string $filename
+     * @return string
+     * @throws \RuntimeException
+     */
+    private function readFile(string $filename): string
+    {
+        $content = @file_get_contents($filename);
+
+        if (($err = error_get_last()) != null){
+            throw new \RuntimeException($err['message']);
+        }
+
+        return $content;
+    }
+
+    private function getExtensions(string $content): array
+    {
+        $mimeType = $this->detectMimeType($content);
+        return (new MimeTypes)->getExtensions($mimeType);
     }
 
     /**
