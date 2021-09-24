@@ -8,4 +8,7 @@ $detector = new FinfoDetector;
 
 $detector->detectMimeType(file_get_contents('index.html')) // text/html;
 $detector->detectExtension(file_get_contents('index.html')) // html;
+
+$detector->detectFileMimeType('index.html') // text/html;
+$detector->detectFileExtension('index.html') // html;
 ````
