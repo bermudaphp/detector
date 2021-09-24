@@ -2,6 +2,6 @@
 
 namespace Bermuda\Detector;
 
-interface ContentDetector extends MimeTypeDetector, ExtensionDetector
+interface Detector extends MimeTypeDetector, ExtensionDetector
 {
 }
