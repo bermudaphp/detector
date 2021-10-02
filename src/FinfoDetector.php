@@ -5,7 +5,7 @@ namespace Bermuda\Detector;
 use finfo;
 use Devanych\Mime\MimeTypes;
 
-final class FinfoDetector implements ContentDetector
+final class FinfoDetector implements Detector
 {
     /**
      * @param string $filename
