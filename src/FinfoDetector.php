@@ -35,28 +35,28 @@ final class FinfoDetector implements Detector
     public function detectFileExtension(string $filename):? string
     {
         $content = $this->readFile($filename);
+        $extension = $this->finfoBuffer(FILEINFO_EXTENSION, $content);
+        
+        if (str_contains($extension, '/')) {
+            return str_before($extension, '/');
+        }
 
-        $ext = $this->finfoBuffer(FILEINFO_EXTENSION, $content);
-
-        if ($ext === '???') {
-
-            $result = $this->getExtensions($content);
-            
-            if ($result === []) {
+        if ($extension === '???') {
+            if (($extensions = $this->getExtensions($content)) === []) {
                 return null;
             }
             
-            $result = array_map('strtolower', $result);
-            $ext = pathinfo($filename, PATHINFO_EXTENSION);
+            $extensions = array_map('strtolower', $extensions);
+            $extension = pathinfo($filename, PATHINFO_EXTENSION);
 
-            if (in_array(strtolower($ext), $result)) {
-                return $ext;
+            if (in_array(strtolower($extension), $extensions)) {
+                return $extension;
             }
             
-            return array_shift($result);
+            return array_shift($extensions);
         }
         
-        return $ext;
+        return $extension;
     }
 
     /**
