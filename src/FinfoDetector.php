@@ -38,7 +38,7 @@ final class FinfoDetector implements Detector
         $extension = $this->finfoBuffer(FILEINFO_EXTENSION, $content);
         
         if (str_contains($extension, '/')) {
-            return str_before($extension, '/');
+            return explode('/', $extension, 2)[0];
         }
 
         if ($extension === '???') {
@@ -65,14 +65,18 @@ final class FinfoDetector implements Detector
      */
     public function detectExtension(string $content):? string
     {
-        $ext = $this->finfoBuffer(FILEINFO_EXTENSION, $content);
+        $extension = $this->finfoBuffer(FILEINFO_EXTENSION, $content);
 
-        if ($ext === '???') {
-            $result = $this->getExtensions($content);
-            return $result !== [] ? array_shift($result) : null ;
+        if (str_contains($extension, '/')) {
+            return explode('/', $extension, 2)[0];
         }
 
-        return $ext;
+        if ($extension === '???') {
+            $extensions = $this->getExtensions($content);
+            return $extensions !== [] ? array_shift($extensions) : null ;
+        }
+
+        return $extension;
     }
 
     /**
