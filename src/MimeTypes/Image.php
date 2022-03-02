@@ -13,4 +13,19 @@ final class Image
     public const vnd_microsoft_icon = 'image/vnd.microsoft.icon';
     public const vnd_wap_wbmp       = 'image/vnd.wap.wbmp';
     public const webp               = 'image/webp';
+    
+    public static function getTypes(): array
+    {
+        return [
+            self::gif,
+            self::jpeg,
+            self::png,
+            self::pjpeg,
+            self::svg,
+            self::tiff,
+            self::vnd_microsoft_icon,
+            self::vnd_wap_wbmp,
+            self::webp,
+        ];
+    }
 }
