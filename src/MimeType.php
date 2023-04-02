@@ -24,4 +24,13 @@ final class MimeType implements \Stringable
 
         return false;
     }
+    
+    /**
+     * @param string $type
+     * @return bool
+     */
+    public function contains(string $type): bool
+    {
+        return str_contains($this->value, strtolower($type));
+    }
 }
