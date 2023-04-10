@@ -18,8 +18,14 @@ final class MimeType implements \Stringable
     public function equals(array|string|self $types): bool
     {
         is_array($types) ?: $types = [$types];
+
         foreach ($types as $type) {
-            if (strtolower((string) $type) === $this->value) return true;
+            $type = strtolower((string) $type);
+            if ($type === $this->value) return true;
+            if ((str_ends_with($type, '*'))) {
+                $needle = explode('/', $type, 2)[0];
+                if ($this->contains($needle)) return true;
+            }
         }
 
         return false;
